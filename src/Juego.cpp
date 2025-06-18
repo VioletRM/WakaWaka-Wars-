@@ -1,4 +1,4 @@
-#include "Juego.h"
+#include <Juego.h>
 
 Juego::Juego() : window(sf::VideoMode(800, 600), "Pac-Man Multijugador"), speed(3.0f) {
    

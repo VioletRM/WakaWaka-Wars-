@@ -1,30 +1,34 @@
-# === CONFIGURACIÓN ===
-CXX = g++
-SRC = src
-BIN = bin
-ASSETS = assets
-INCLUDES = -IC:/SFML/include -Iinclude
-LIBS = -LC:/SFML/lib -lsfml-graphics -lsfml-window -lsfml-system
-CXXFLAGS = -Wall -std=c++17
+# Directorios de origen y destino
+SRC_DIR := src
+BIN_DIR := bin
+INCLUDES := -IC:/SFML/include -Iinclude
+LIBS := -LC:/SFML/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-# === ARCHIVOS ===
-SRCS = $(SRC)/main.cpp $(SRC)/Juego.cpp $(SRC)/pacman.cpp $(SRC)/ghost.cpp
-OUT = $(BIN)/wakawaka.exe
+# Obtener todos los archivos .cpp en el directorio de origen
+CPP_FILES := $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES := $(CPP_FILES:.cpp=.o)
 
-# === REGLAS ===
+# Nombre del ejecutable final
+TARGET := $(BIN_DIR)/wakawaka.exe
 
-all: $(BIN) $(OUT)
+# Compilación del ejecutable
+$(TARGET): $(OBJ_FILES)
+	mkdir -p $(BIN_DIR)
+	$(CXX) $(OBJ_FILES) -o $(TARGET) $(LIBS)
 
-$(BIN):
-	mkdir $(BIN)
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OUT): $(SRCS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(LIBS)
+# Regla por defecto
+all: $(TARGET)
 
-run: all
-	./$(OUT)
-
+# Limpiar los archivos binarios generados
 clean:
-	del /Q $(BIN)\*.exe
+	if exist "$(SRC_DIR)\*.o" del /Q "$(SRC_DIR)\*.o"
+	if exist "$(BIN_DIR)\*.exe" del /Q "$(BIN_DIR)\*.exe"
 
-
+# Regla para ejecutar el juego
+run: $(TARGET)
+	$(TARGET)
+ 
+.PHONY: all clean run

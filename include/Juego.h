@@ -1,28 +1,67 @@
+// === juego.h ===
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <fstream>  // Para std::ifstream
 
-// Incluir los archivos de cabecera de Pacman y Ghost
-#include "pacman.h"
-#include "ghost.h"
-
-class Juego {
+class Pacman {
 private:
-    sf::RenderWindow window;
-    Pacman pacman;  // Ahora tiene la definición completa
-    Ghost ghost;    // Ahora tiene la definición completa
-    sf::Text textoScore;
-    
-    // Mapa del juego representado como una matriz
-    int mapa[15][20];  // Definir el mapa como una matriz de enteros
-    int score = 0;
+    sf::Sprite sprite;
+    sf::Texture texture;
+    float speed;
+    int frame = 0;
+    sf::Clock animClock;
+
+    int puntos = 0;
+    int vidas = 1;
+    bool velocidadExtra = false;
+    sf::Clock velocidadTimer;
 
 public:
-    Juego();
-    void ejecutar();
-    void cargarMapa(const std::string& ruta);
-    bool esBloqueLibre(float x, float y);
+    Pacman();
+    void move(int dx, int dy, int mapa[15][20], int tileSize);
+    void draw(sf::RenderWindow& window);
+    sf::FloatRect getBounds() const;
+    sf::Vector2f getPosition() const;
+    sf::Sprite& getSprite(); // ✅ AGREGADO
+
+    void sumarPunto();
+    void agregarVida();
+    void activarVelocidad();
+    void actualizarVelocidad();
+    int getPuntos() const;
+    int getVidas() const;
+    float getVelocidad() const;
 };
 
+class Ghost {
+private:
+    sf::Sprite sprite;
+    sf::Texture texture;
+    float speed;
 
+    int puntos = 0;
+    int vidas = 1;
+    bool velocidadExtra = false;
+    sf::Clock velocidadTimer;
+
+public:
+    Ghost();
+    void move(int dx, int dy, int mapa[15][20], int tileSize);
+    void draw(sf::RenderWindow& window);
+    sf::FloatRect getBounds() const;
+    sf::Vector2f getPosition() const;
+    sf::Sprite& getSprite(); // ✅ AGREGADO
+
+    void sumarPunto();
+    void agregarVida();
+    void activarVelocidad();
+    void actualizarVelocidad();
+    int getPuntos() const;
+    int getVidas() const;
+    float getVelocidad() const;
+};
+
+class GameManager {
+public:
+    void run();
+};

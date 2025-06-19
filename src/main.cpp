@@ -1,9 +1,9 @@
-#include "../include/juego.h"
+#include "../include/Juego.h"
 #include <iostream>
 
 int main() {
-    Juego juego;
-    juego.ejecutar();
+    GameManager juego;
+    juego.run();
     return 0;
 }
 

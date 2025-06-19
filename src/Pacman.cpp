@@ -2,7 +2,7 @@
 
 // Constructor de Pacman
 Pacman::Pacman() {
-    texture.loadFromFile("assets/images/Pacman.png");
+    texture.loadFromFile("assets/images/pacman.png");
     sprite.setTexture(texture);
     float escala = (32.0f * 0.8f) / texture.getSize().x;
     sprite.setScale(escala, escala);

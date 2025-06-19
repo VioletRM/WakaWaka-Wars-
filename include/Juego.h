@@ -1,30 +1,28 @@
-#ifndef JUEGO_H
-#define JUEGO_H
-
+#pragma once
 #include <SFML/Graphics.hpp>
-#include <vector>
-#include <string>
-#include <fstream>
+#include <SFML/Audio.hpp>
+#include <fstream>  // Para std::ifstream
+
+// Incluir los archivos de cabecera de Pacman y Ghost
+#include "pacman.h"
+#include "ghost.h"
 
 class Juego {
 private:
     sf::RenderWindow window;
-    sf::Texture pacmanTexture, ghostTexture;
-    sf::Sprite pacman, ghost;
-    sf::Font fuente;
+    Pacman pacman;  // Ahora tiene la definición completa
+    Ghost ghost;    // Ahora tiene la definición completa
     sf::Text textoScore;
-    sf::RectangleShape bloque;
-
-    std::vector<std::string> mapa;
+    
+    // Mapa del juego representado como una matriz
+    int mapa[15][20];  // Definir el mapa como una matriz de enteros
     int score = 0;
-    float speed;
-
-    bool esBloqueLibre(float x, float y);  // <-- Declaramos aquí como método privado
 
 public:
     Juego();
     void ejecutar();
     void cargarMapa(const std::string& ruta);
+    bool esBloqueLibre(float x, float y);
 };
 
-#endif
+

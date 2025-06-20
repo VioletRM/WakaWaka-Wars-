@@ -37,6 +37,39 @@ sf::Sprite& Ghost::getSprite() { return sprite; }
 
 void GameManager::run() {
     sf::RenderWindow window(sf::VideoMode(640, 480), "Wakawaka Wars");
+
+    // Pantalla de inicio
+    sf::Texture inicioTexture;
+    if (!inicioTexture.loadFromFile("assets/images/inicio.png")) {
+        std::cerr << "No se pudo cargar la imagen de inicio." << std::endl;
+    }
+    sf::Sprite inicioSprite(inicioTexture);
+    inicioSprite.setScale(640.0f / inicioTexture.getSize().x, 480.0f / inicioTexture.getSize().y);
+
+    // Sonido de inicio
+    sf::SoundBuffer inicioBuffer;
+    if (!inicioBuffer.loadFromFile("assets/music/inicio.ogg")) {
+        std::cerr << "No se pudo cargar el sonido de inicio." << std::endl;
+    }
+    sf::Sound inicioSound(inicioBuffer);
+    inicioSound.setLoop(true);
+    inicioSound.play();
+
+    bool juegoIniciado = false;
+    while (window.isOpen() && !juegoIniciado) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
+                juegoIniciado = true;
+        }
+        window.clear();
+        window.draw(inicioSprite);
+        window.display();
+    }
+    inicioSound.stop();
+
     sf::Texture fondoTexture;
     fondoTexture.loadFromFile("assets/images/background.png");
     sf::Sprite fondo(fondoTexture);
@@ -44,21 +77,21 @@ void GameManager::run() {
 
     const int filas = 15, columnas = 20, tileSize = 32;
     int mapa[filas][columnas] = {
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1},
-        {1,0,1,1,1,0,1,0,1,1,0,1,0,1,1,1,0,1,0,1},
-        {1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1},
-        {1,0,1,0,1,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1},
-        {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1},
-        {1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,0,1},
-        {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1},
-        {1,0,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1},
-        {1,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1},
-        {1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1},
-        {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1},
-        {1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1},
+    {1,0,1,1,1,0,1,0,1,1,0,1,0,1,1,1,0,1,0,1},
+    {1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1},
+    {1,0,1,0,1,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1},
+    {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1},
+    {1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,0,1},
+    {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1},
+    {1,0,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1},
+    {1,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1},
+    {1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1},
+    {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1},
+    {1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
     int puntos[filas][columnas] = {};
@@ -175,6 +208,30 @@ void GameManager::run() {
 
         pacman.draw(window);
         ghost.draw(window);
+
+        // Lógica de victoria/derrota por colisión
+        if (pacman.getBounds().intersects(ghost.getBounds())) {
+            sf::Text resultado;
+            resultado.setFont(font);
+            resultado.setCharacterSize(40);
+            resultado.setPosition(120, 200);
+            // Puedes personalizar la lógica de victoria aquí
+            if (pacman.getPuntos() >= ghost.getPuntos()) {
+                resultado.setString("¡Pacman gana!");
+                resultado.setFillColor(sf::Color::Yellow);
+            } else {
+                resultado.setString("¡Ghost gana!");
+                resultado.setFillColor(sf::Color::Red);
+            }
+            window.clear();
+            window.draw(fondo);
+            window.draw(resultado);
+            window.display();
+            sf::sleep(sf::seconds(2));
+            window.close();
+            break;
+        }
+
         window.display();
     }
 }

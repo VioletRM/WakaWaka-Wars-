@@ -23,3 +23,15 @@ WakaWaka Wars is a two-player game inspired by Pacman. One player controls Pacma
 
 ## License
 This project is open-source and free to use.
+
+## How to play it
+![Pantalla de inicio](assets/images/imagen_readme.png)
+
+This is the game's home screen.
+With a tab of the space bar the game starts!
+
+![Gameplay](assets/images/imagen_readme2.png)
+
+This is the maze of our fun game, the one who collides with the other wins.
+
+Good Luck!!
